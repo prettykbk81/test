@@ -4,6 +4,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 import json
+import os
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv()
 
 # matplotlib 한글 폰트 설정
 plt.rcParams['font.family'] = 'Malgun Gothic'
@@ -13,8 +18,18 @@ plt.rcParams['axes.unicode_minus'] = False
 st.set_page_config(page_title="홈앤쇼핑 편성표 대시보드", layout="wide")
 
 # ===== Supabase 연결 설정 =====
-SUPABASE_URL = "https://ishipuyszpeeayvnhehb.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzaGlwdXlzenBlZWF5dm5oZWhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTQ4NzksImV4cCI6MjA5NjEzMDg3OX0.vWyyFrlRVzjKCPBzUVxG7qXz7r-M0B2wEVQ905FR9s8"
+# Streamlit secrets 또는 환경변수에서 설정값 읽기
+try:
+    SUPABASE_URL = st.secrets["supabase_url"]
+    SUPABASE_KEY = st.secrets["supabase_key"]
+except (KeyError, FileNotFoundError):
+    # secrets.toml이 없으면 환경변수에서 읽기
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        st.error("❌ Supabase 설정이 필요합니다. .streamlit/secrets.toml 또는 .env 파일을 확인해주세요.")
+        st.stop()
 
 # ===== 데이터 로드 =====
 @st.cache_data(ttl=3600)
