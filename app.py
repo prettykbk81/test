@@ -65,6 +65,7 @@ def fmt_krw(n):
     return f"₩{n:,.0f}"
 
 df = load_and_simulate_data()
+df['날짜'] = pd.to_datetime(df['날짜'])
 
 st.markdown("""
 <h1 style='text-align: center; color: #1E6FBB; font-family: Malgun Gothic, NanumGothic, serif;'>
